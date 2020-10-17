@@ -8,13 +8,15 @@ from django.shortcuts import render
 # так как при перезапуске приложения они обнулятся
 dict_show = {}
 counter_show = Counter()
-
-
 counter_click = Counter()
 
 
 def index(request):
     # Реализуйте логику подсчета количества переходов с лендига по GET параметру from-landing
+    from_landing = request.GET.get('from-landing', '')
+    if not from_landing == '':
+        counter_click.update({'click': 1})
+
     return render(request, 'index.html')
 
 
@@ -24,7 +26,6 @@ def landing(request):
     # который может принимать значения original и test
     # Так же реализуйте логику подсчета количества показов
     counter_show.update({'original_from_landing': 1})
-    counter_click.update({'click': 1})
     return render(request, 'landing.html')
 
 
@@ -34,14 +35,12 @@ def alternate(request):
     # который может принимать значения original и test
     # Так же реализуйте логику подсчета количества показов
     counter_show.update({'test_from_landing': 1})
-    counter_click.update({'click': 1})
     return render(request, 'landing_alternate.html')
 
 
 def stats(request):
     # Реализуйте логику подсчета отношения количества переходов к количеству показов страницы
     # Для вывода результат передайте в следующем формате:
-    
     if counter_click['click'] > 0:
         stat_origin = counter_show['original_from_landing']/counter_click['click']
         stat_test = counter_show['test_from_landing']/counter_click['click']
