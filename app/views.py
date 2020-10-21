@@ -15,8 +15,13 @@ def index(request):
     # Реализуйте логику подсчета количества переходов с лендига по GET параметру from-landing
     from_landing = request.GET.get('from-landing', '')
     if not from_landing == '':
-        counter_click.update({'click': 1})
-
+        if from_landing == 'test':
+            counter_click.update({'click_test': 1})
+            counter_click.update({'click': 1})
+        elif from_landing == 'original':
+            counter_click.update({'click_origin': 1})
+            counter_click.update({'click': 1})
+    print(counter_click['click_origin'])
     return render(request, 'index.html')
 
 
@@ -25,7 +30,7 @@ def landing(request):
     # в зависимости от GET параметра ab-test-arg
     # который может принимать значения original и test
     # Так же реализуйте логику подсчета количества показов
-    counter_show.update({'original_from_landing': 1})
+    counter_show.update({'original': 1})
     return render(request, 'landing.html')
 
 
@@ -34,7 +39,7 @@ def alternate(request):
     # в зависимости от GET параметра ab-test-arg
     # который может принимать значения original и test
     # Так же реализуйте логику подсчета количества показов
-    counter_show.update({'test_from_landing': 1})
+    counter_show.update({'test': 1})
     return render(request, 'landing_alternate.html')
 
 
@@ -42,8 +47,8 @@ def stats(request):
     # Реализуйте логику подсчета отношения количества переходов к количеству показов страницы
     # Для вывода результат передайте в следующем формате:
     if counter_click['click'] > 0:
-        stat_origin = counter_show['original_from_landing']/counter_click['click']
-        stat_test = counter_show['test_from_landing']/counter_click['click']
+        stat_origin = counter_show['original']/counter_click['click_origin']
+        stat_test = counter_show['test']/counter_click['click_test']
     else:
         return HttpResponse('Страницы АБ-тестирования не посещались!')
 
